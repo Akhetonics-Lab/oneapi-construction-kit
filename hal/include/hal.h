@@ -59,6 +59,15 @@ struct hal_device_t {
   /// otherwise a handle to the program.
   virtual hal_program_t program_load(const void *data, hal_size_t size) = 0;
 
+ /// @brief Load an Binary File into target memory 
+ /// @param data is ta pointer to the raw executable binary blob to load
+ //  @param memap represent a memory map to load File into target memory
+ /// @param size is the size of the raw executable bunary provided. 
+ ///
+ /// @return returns hal_invalid_program program if the program cold not be loaded
+ /// otherwise a handle to the program
+ virtual hal_program_t program_load(const void *data, const char * jsmap, hal_size_t size) = 0;
+
   /// @brief Execute a kernel on the target.
   ///
   /// @param program is a handle to a previously loaded program.

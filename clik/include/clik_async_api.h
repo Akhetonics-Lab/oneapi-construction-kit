@@ -57,6 +57,13 @@ CLIK_API clik_program *clik_create_program(clik_device *device,
                                            const void *binary_data,
                                            uint64_t binary_size);
 
+//Create an aternative program object unsing a binary file and a jeson mapper. the program can contain one or more kernel functions. 
+CLIK_API clik_program *clik_create_program(clik_device *device
+		,const void *binary_data
+		,const char *jsmemap
+		,uint64_t binary_size
+		);
+
 // Free the resources used by the program object.
 CLIK_API void clik_release_program(clik_program *program);
 

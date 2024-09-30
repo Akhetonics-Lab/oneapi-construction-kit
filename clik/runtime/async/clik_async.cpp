@@ -92,6 +92,24 @@ clik_program *clik_create_program(clik_device *device, const void *binary_data,
   return program;
 }
 
+
+//This function implements the program loading using binary data and json file. 
+clik_program *clik_create_program(clik_device *device, const void* binary_data, const char* jsmemap, uint64_t binary_size){
+  if (!device){
+    return nullptr;
+  }
+  std::lock_guard<std::mutex> locker(device->lock);
+  hal::hal_program_t elf = 
+	  device->hal_device->program_load(binary_data, jsmemap, binary_size);
+  if (elf == hal::hal_invalid_program) {
+      return nullptr;
+  }
+  clik_program *program = new clik_program();
+  program->device = device;
+  program->elf = elf;
+  return program;
+}
+
 // Free the resources used by the program object.
 void clik_release_program(clik_program *program) {
   if (!program) {

@@ -29,6 +29,7 @@ namespace hal {
 using hal_program_t = uint64_t;
 using hal_kernel_t = uint64_t;
 using hal_library_t = void *;
+using hal_jsmap_t = const char *;
 struct hal_t;
 struct hal_device_t;
 }  // namespace hal
@@ -53,6 +54,8 @@ struct clik_program {
   clik_device *device;
   // ELF program read from a binary.
   hal::hal_program_t elf;
+  // -- memmap read from jsfile.
+  hal::hal_jsmap_t jmmap;
 };
 
 // Contains state required for a kernel object.

@@ -16,22 +16,22 @@
 
 #include <stdio.h>
 
-#include "clik_sync_api.h"
+#include "clik_async_api.h"
 #include "option_parser.h"
 
 // This header contains the kernel binary resulting from compiling
-// 'device_hello.c' and turning it into a C array using the Bin2 tool.
+// 'device_hello.c' and turning it into a C array using the Bin2H tool.
 #include "kernel_binary.h"
+#define JS_MEMAP "/srv/refsi_tutorial_part1/build/examples/clik_async/hello/jsmemap.js"
 
-const char * js_mmap =  "/srv/refsi_tutorial_part1/build/examples/clik_sync/hello/hello_memap.json";
- 
 int main(int argc, char **argv) {
-  // Process command line options. 
+  // Process command line options.
   uint64_t local_size = 1;
   uint64_t global_size = 8;
   option_parser_t parser;
   parser.help([]() {
-    fprintf(stderr, "Usage: ./hello [--local-size N] [--global-size N]\n");
+    fprintf(stderr,
+            "Usage: ./hello_async [--local-size L] [--global-size S]\n");
   });
   parser.option('L', "local-size", 1,
                 [&](const char *s) { local_size = strtoull(s, 0, 0); });
@@ -39,17 +39,18 @@ int main(int argc, char **argv) {
                 [&](const char *s) { global_size = strtoull(s, 0, 0); });
   parser.parse(argv);
 
+  // Set up the device.
   clik_device *device = clik_create_device();
   if (!device) {
     fprintf(stderr, "Unable to create a clik device.\n");
     return 1;
   }
+  clik_command_queue *queue = clik_get_device_queue(device);
 
   // Load the kernel program.
   clik_program *program = clik_create_program(device
-		        ,hello_kernel_binary
-		  	,js_mmap
-                        ,hello_kernel_binary_size);
+			       ,hello_async_kernel_binary
+                               ,hello_async_kernel_binary_size);
   if (!program) {
     fprintf(stderr, "Unable to create a program from the kernel binary.\n");
     return 2;
@@ -58,13 +59,21 @@ int main(int argc, char **argv) {
   // Run the kernel.
   clik_ndrange ndrange;
   clik_init_ndrange_1d(&ndrange, global_size, local_size);
-  printf("Running hello example (Global size: %zu, local size: %zu)\n",
+  printf("Running hello_async example (Global size: %zu, local size: %zu)\n",
          ndrange.global[0], ndrange.local[0]);
-  if (!clik_run_kernel(program, "kernel_main", &ndrange, nullptr, 0)) {
-    fprintf(stderr, "Could not execute the kernel.\n");
+  clik_kernel *kernel =
+      clik_create_kernel(program, "kernel_main", &ndrange, nullptr, 0);
+  if (!kernel) {
+    fprintf(stderr, "Unable to create a kernel.\n");
+    return 3;
+  } else if (!clik_enqueue_kernel(queue, kernel)) {
+    fprintf(stderr, "Could not enqueue the kernel.\n");
     return 3;
   }
+  clik_dispatch(queue);
+  clik_wait(queue);
 
+  clik_release_kernel(kernel);
   clik_release_program(program);
   clik_release_device(device);
   return 0;

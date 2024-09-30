@@ -23,7 +23,7 @@ endif()
 
 add_clik_example(
   TARGET hello_async
-  SOURCES hello.cpp
+  SOURCES hello2.cpp
   KERNELS hello_async_kernel
 )
 
