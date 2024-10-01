@@ -23,7 +23,7 @@
 // 'device_hello.c' and turning it into a C array using the Bin2 tool.
 #include "kernel_binary.h"
 
-const char * js_mmap =  "/srv/refsi_tutorial_part1/build/examples/clik_sync/hello/hello_memap.json";
+const char * js_mmap =  "/srv/refsi_tutorial_part1/json/hello_mmap.json";
  
 int main(int argc, char **argv) {
   // Process command line options. 
