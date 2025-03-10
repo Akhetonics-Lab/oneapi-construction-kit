@@ -34,7 +34,7 @@ clik_device *clik_create_device() {
     hal::unload_hal(library);
     return nullptr;
   }
-  hal::hal_device_t *hal_device = hal->device_create(0);
+  hal::hal_device_t *hal_device = hal->device_create(1);
   if (!hal_device) {
     hal::unload_hal(library);
     return nullptr;

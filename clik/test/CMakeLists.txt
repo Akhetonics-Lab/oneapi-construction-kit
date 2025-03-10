@@ -22,5 +22,5 @@ add_custom_target(check_clik
 
 add_dependencies(check_clik ClikExamples)
 if(NOT CLIK_HAL_NAME STREQUAL "")
-  add_dependencies(check_click hal_${CLIK_HAL_NAME})
+  add_dependencies(check_clik hal_${CLIK_HAL_NAME})
 endif()

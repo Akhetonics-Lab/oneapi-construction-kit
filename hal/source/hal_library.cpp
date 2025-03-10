@@ -85,7 +85,7 @@ hal_t *load_hal_library(const char *library_path, uint32_t expected_api_version,
   // https://stackoverflow.com/questions/51209268/using-stdthread-in-a-library-loaded-with-dlopen-leads-to-a-sigsev
   handle = dlopen(library_path, RTLD_LAZY | RTLD_GLOBAL);
   if (!handle) {
-    fprintf(stderr, "error: could not load '%s'\n", library_path);
+    fprintf(stderr, "error: could not load '%s' due to: %s\n", library_path, dlerror());
     return nullptr;
   }
   create_hal_fn hal_entry_fn = (create_hal_fn)dlsym(handle, "get_hal");
